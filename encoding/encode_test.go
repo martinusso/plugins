@@ -4,47 +4,65 @@ import (
 	"testing"
 
 	"github.com/go-chat-bot/bot"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestEncode(t *testing.T) {
-	Convey("Encode", t, func() {
-		bot := &bot.Cmd{
-			Command: "encode",
-		}
+func TestEncodeShouldEncodeAValue(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "encode",
+	}
+	bot.Args = []string{"base64", "The Go Programming Language"}
+	got, err := encode(bot)
 
-		Convey("Should encode a value", func() {
-			bot.Args = []string{"base64", "The Go Programming Language"}
-			got, error := encode(bot)
+	expected := "VGhlIEdvIFByb2dyYW1taW5nIExhbmd1YWdl"
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
+}
 
-			want := "VGhlIEdvIFByb2dyYW1taW5nIExhbmd1YWdl"
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, want)
-		})
+func TestEncodeShouldEncodeMultipleWords(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "encode",
+	}
+	bot.Args = []string{"base64", "The", "Go", "Programming", "Language"}
+	got, err := encode(bot)
 
-		Convey("Should encode multiple words", func() {
-			bot.Args = []string{"base64", "The", "Go", "Programming", "Language"}
-			got, error := encode(bot)
+	expected := "VGhlIEdvIFByb2dyYW1taW5nIExhbmd1YWdl"
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
+}
 
-			want := "VGhlIEdvIFByb2dyYW1taW5nIExhbmd1YWdl"
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, want)
-		})
+func TestEncodeShouldReturnErrorMessageWhenPassInvalidParam(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "encode",
+	}
+	bot.Args = []string{"invalid_code", "R28gaXMgYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
+	got, err := encode(bot)
 
-		Convey("Should return a error message when pass correct amount of params but invalid param", func() {
-			bot.Args = []string{"invalid_code", "R28gaXMgYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
-			got, error := encode(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != invalidParams {
+		t.Errorf("Should return a error message when pass correct amount of params but invalid param")
+	}
+}
 
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, invalidParams)
-		})
+func TestEncodeShouldReturnErrorMessageWhenDontPassAnyParams(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "encode",
+	}
+	got, err := encode(bot)
 
-		Convey("Should return a error message when don't pass any params", func() {
-			got, error := encode(bot)
-
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, invalidAmountOfParams)
-		})
-
-	})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != invalidAmountOfParams {
+		t.Errorf("Should return a error message when don't pass any params")
+	}
 }

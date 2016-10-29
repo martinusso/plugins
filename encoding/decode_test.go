@@ -1,48 +1,65 @@
 package encoding
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/go-chat-bot/bot"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestDecode(t *testing.T) {
-	Convey("Decode", t, func() {
-		bot := &bot.Cmd{
-			Command: "decode",
-		}
+func TestDecodeShouldDecodeAValue(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "decode",
+	}
+	bot.Args = []string{"base64", "R28gaXMgYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
+	got, err := decode(bot)
+	expected := "Go is an open source programming language"
 
-		Convey("Should decode a value", func() {
-			bot.Args = []string{"base64", "R28gaXMgYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
-			got, error := decode(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
+}
+func TestDecodeShouldReturnErrorMessageWhenPassInvalidHash(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "decode",
+	}
+	bot.Args = []string{"base64", "R28gaXMgYW4gb3BlbiBzb3VyY2Ugc", "HJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
+	got, err := decode(bot)
 
-			want := "Go is an open source programming language"
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, want)
-		})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if !strings.HasPrefix(got, "Error:") {
+		t.Errorf("Should return a error message when pass a invalid hash")
+	}
+}
+func TestDecodeShouldReturnErrorMessageWhenPassInvalidParam(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "decode",
+	}
+	bot.Args = []string{"invalid_code", "R28gaXMgYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
+	got, err := decode(bot)
 
-		Convey("Should return a error message when pass a invalid hash", func() {
-			bot.Args = []string{"base64", "R28gaXMgYW4gb3BlbiBzb3VyY2Ugc", "HJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
-			got, error := decode(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != invalidParams {
+		t.Errorf("Should return a error message when pass correct amount of params but invalid param")
+	}
+}
+func TestDecodeShouldReturnErrorMessageWhenDontPassAnyParams(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "decode",
+	}
+	got, err := decode(bot)
 
-			So(error, ShouldBeNil)
-			So(got, ShouldStartWith, "Error: ")
-		})
-
-		Convey("Should return a error message when pass correct amount of params but invalid param", func() {
-			bot.Args = []string{"invalid_code", "R28gaXMgYW4gb3BlbiBzb3VyY2UgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U="}
-			got, error := decode(bot)
-
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, invalidParams)
-		})
-
-		Convey("Should return a error message when don't pass any params", func() {
-			got, error := decode(bot)
-
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, invalidAmountOfParams)
-		})
-	})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != invalidAmountOfParams {
+		t.Errorf("Should return a error message when don't pass any params")
+	}
 }
