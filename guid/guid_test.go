@@ -5,39 +5,70 @@ import (
 	"testing"
 
 	"github.com/go-chat-bot/bot"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
 	guidSize = 36
 )
 
-func TestGUID(t *testing.T) {
-	Convey("GUID", t, func() {
-		bot := &bot.Cmd{
-			Command: "guid",
-		}
+func TestGUIDShouldReturnValidGUID(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "guid",
+	}
+	got, err := guid(bot)
 
-		Convey("Should return a valid GUID", func() {
-			got, error := guid(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if len(got) != guidSize {
+		t.Errorf("Expected a valid GUID, but it was %s instead.", got)
+	}
+	if strings.Split(got, "")[14] != "4" {
+		t.Errorf("Expected a valid GUID version 4, but it was %s instead.", got)
+	}
+}
 
-			So(error, ShouldBeNil)
-			So(len(got), ShouldEqual, guidSize)
-		})
+func TestGUIDShouldReturnUpperGUID(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "guid",
+	}
+	bot.Args = []string{"upper"}
+	got, err := guid(bot)
 
-		Convey("Should return a GUID version 4", func() {
-			got, error := guid(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != strings.ToUpper(got) {
+		t.Errorf("Should return a upper GUID, but it was %s instead.", got)
+	}
+}
 
-			So(error, ShouldBeNil)
-			So(strings.Split(got, "")[14], ShouldEqual, "4")
-		})
+func TestGUIDInvalidParam(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "guid",
+	}
+	bot.Args = []string{"lower"}
+	got, err := guid(bot)
 
-		Convey("Should return a upper GUID", func() {
-			bot.Args = []string{"upper"}
-			got, error := guid(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != msgInvalidParam {
+		t.Errorf("Test Failed. Expected %s, but it was %s instead.", msgInvalidParam, got)
+	}
+}
 
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, strings.ToUpper(got))
-		})
-	})
+func TestGUIDInvalidAmountOfParams(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "guid",
+	}
+	bot.Args = []string{"upper", "lower"}
+	got, err := guid(bot)
+
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != msgInvalidAmountOfParams {
+		t.Errorf("Test Failed. Expected %s, but it was %s instead.", msgInvalidAmountOfParams, got)
+	}
 }
