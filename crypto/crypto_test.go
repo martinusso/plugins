@@ -4,70 +4,97 @@ import (
 	"testing"
 
 	"github.com/go-chat-bot/bot"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestCrypto(t *testing.T) {
-	Convey("Crypto", t, func() {
-		bot := &bot.Cmd{
-			Command: "crypto",
-		}
+func TestCryptoShouldReturnErrorMessageWhenDontPassAnyParams(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "crypto",
+	}
+	got, err := crypto(bot)
 
-		Convey("Should return a error message when don't pass any params", func() {
-			got, error := crypto(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != invalidAmountOfParams {
+		t.Errorf("Test failed. Should return a error message when don't pass any params.")
+	}
+}
 
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, invalidAmountOfParams)
-		})
+func TestCryptoShouldReturnErrorMessageWhenPassAnInvalidAlgorithm(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "crypto",
+	}
+	bot.Args = []string{"invalidAlgorithm", "input data"}
+	got, err := crypto(bot)
 
-		Convey("Should return a error message when pass an invalid algorithm", func() {
-			bot.Args = []string{"invalidAlgorithm", "input data"}
-			got, error := crypto(bot)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != invalidParams {
+		t.Errorf("Should return a error message when pass an invalid algorithm")
+	}
+}
 
-			So(error, ShouldBeNil)
-			So(got, ShouldEqual, invalidParams)
-		})
+func TestCryptoShouldEncryptUsingMD5(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "crypto",
+	}
+	bot.Args = []string{"md5", "go-chat-bot"}
+	got, err := crypto(bot)
+	expected := "1120d1df84fec8a0557e8737ac021651"
 
-		Convey("using MD5 algorithm", func() {
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
+}
 
-			Convey("Should encrypt a value", func() {
-				bot.Args = []string{"md5", "go-chat-bot"}
-				got, error := crypto(bot)
-				want := "1120d1df84fec8a0557e8737ac021651"
+func TestCryptoShouldEncryptMultipleWordsUsingMD5(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "crypto",
+	}
+	bot.Args = []string{"md5", "The", "Go", "Programming", "Language"}
+	got, err := crypto(bot)
+	expected := "adb505803d3502f2f00c88365ab85bf0"
 
-				So(error, ShouldBeNil)
-				So(got, ShouldEqual, want)
-			})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
+}
 
-			Convey("Should encrypt multiple words", func() {
-				bot.Args = []string{"md5", "The", "Go", "Programming", "Language"}
-				got, error := crypto(bot)
-				want := "adb505803d3502f2f00c88365ab85bf0"
+func TestCryptoShouldEncryptUsingSHA1(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "crypto",
+	}
+	bot.Args = []string{"sha1", "go-chat-bot"}
+	got, err := crypto(bot)
+	expected := "385ca248ffebb5ed7f62d1ea2b0545cff80ac18e"
 
-				So(error, ShouldBeNil)
-				So(got, ShouldEqual, want)
-			})
-		})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
+}
 
-		Convey("using SHA-1 algorithm", func() {
+func TestCryptoShouldEncryptMultipleWordsUsingSHA1(t *testing.T) {
+	bot := &bot.Cmd{
+		Command: "crypto",
+	}
+	bot.Args = []string{"sha-1", "The", "Go", "Programming", "Language"}
+	got, err := crypto(bot)
+	expected := "88a93e668044877a845097aaf620532a232bfd34"
 
-			Convey("Should encrypt a value", func() {
-				bot.Args = []string{"sha1", "go-chat-bot"}
-				got, error := crypto(bot)
-				want := "385ca248ffebb5ed7f62d1ea2b0545cff80ac18e"
-
-				So(error, ShouldBeNil)
-				So(got, ShouldEqual, want)
-			})
-
-			Convey("Should encrypt multiple words", func() {
-				bot.Args = []string{"sha-1", "The", "Go", "Programming", "Language"}
-				got, error := crypto(bot)
-				want := "88a93e668044877a845097aaf620532a232bfd34"
-
-				So(error, ShouldBeNil)
-				So(got, ShouldEqual, want)
-			})
-		})
-	})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != expected {
+		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
+	}
 }
