@@ -6,7 +6,7 @@ import (
 	"github.com/go-chat-bot/bot"
 )
 
-func TestEncodeShouldEncodeAValue(t *testing.T) {
+func TestEncode(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "encode",
 	}
@@ -22,7 +22,7 @@ func TestEncodeShouldEncodeAValue(t *testing.T) {
 	}
 }
 
-func TestEncodeShouldEncodeMultipleWords(t *testing.T) {
+func TestEncodeWithMultipleWords(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "encode",
 	}
@@ -38,7 +38,7 @@ func TestEncodeShouldEncodeMultipleWords(t *testing.T) {
 	}
 }
 
-func TestEncodeShouldReturnErrorMessageWhenPassInvalidParam(t *testing.T) {
+func TestEncodeWhenPassInvalidParam(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "encode",
 	}
@@ -53,7 +53,7 @@ func TestEncodeShouldReturnErrorMessageWhenPassInvalidParam(t *testing.T) {
 	}
 }
 
-func TestEncodeShouldReturnErrorMessageWhenDontPassAnyParams(t *testing.T) {
+func TestEncodeWhenDontPassAnyParams(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "encode",
 	}

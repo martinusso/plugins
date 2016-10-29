@@ -7,7 +7,7 @@ import (
 	"github.com/go-chat-bot/bot"
 )
 
-func TestDecodeShouldDecodeAValue(t *testing.T) {
+func TestDecode(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "decode",
 	}
@@ -22,7 +22,7 @@ func TestDecodeShouldDecodeAValue(t *testing.T) {
 		t.Errorf("Test failed. Expected: '%s', got:  '%s'", expected, got)
 	}
 }
-func TestDecodeShouldReturnErrorMessageWhenPassInvalidHash(t *testing.T) {
+func TestDecodeWhenPassInvalidHash(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "decode",
 	}
@@ -36,7 +36,7 @@ func TestDecodeShouldReturnErrorMessageWhenPassInvalidHash(t *testing.T) {
 		t.Errorf("Should return a error message when pass a invalid hash")
 	}
 }
-func TestDecodeShouldReturnErrorMessageWhenPassInvalidParam(t *testing.T) {
+func TestDecodeWhenPassInvalidParam(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "decode",
 	}
@@ -50,7 +50,7 @@ func TestDecodeShouldReturnErrorMessageWhenPassInvalidParam(t *testing.T) {
 		t.Errorf("Should return a error message when pass correct amount of params but invalid param")
 	}
 }
-func TestDecodeShouldReturnErrorMessageWhenDontPassAnyParams(t *testing.T) {
+func TestDecodeWhenDontPassAnyParams(t *testing.T) {
 	bot := &bot.Cmd{
 		Command: "decode",
 	}

@@ -2,7 +2,6 @@ package encoding
 
 import (
 	"encoding/base64"
-	"fmt"
 	"strings"
 
 	"github.com/go-chat-bot/bot"
@@ -19,25 +18,20 @@ func encode(command *bot.Cmd) (string, error) {
 	}
 
 	var str string
-	var err error
 	switch command.Args[0] {
 	case "base64":
 		s := strings.Join(command.Args[1:], " ")
-		str, err = encodeBase64(s)
+		str = encodeBase64(s)
 	default:
 		return invalidParams, nil
-	}
-
-	if err != nil {
-		return fmt.Sprintf("Error: %s", err), nil
 	}
 
 	return str, nil
 }
 
-func encodeBase64(str string) (string, error) {
+func encodeBase64(str string) string {
 	data := []byte(str)
-	return base64.StdEncoding.EncodeToString(data), nil
+	return base64.StdEncoding.EncodeToString(data)
 }
 
 func init() {
