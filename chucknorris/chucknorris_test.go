@@ -1,38 +1,46 @@
 package chucknorris
 
 import (
-	"github.com/go-chat-bot/bot"
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	"github.com/go-chat-bot/bot"
 )
 
-func TestChuckNorris(t *testing.T) {
-	Convey("Given a text", t, func() {
-		cmd := &bot.PassiveCmd{}
-		Convey("When the text does not match a chuck norris name", func() {
-			cmd.Raw = "My name is go-bot, I am awesome."
-			s, err := chucknorris(cmd)
+func TestChuckNorrisWhenTheTextDoesNotMatchAChuckNorrisName(t *testing.T) {
+	cmd := &bot.PassiveCmd{}
+	cmd.Raw = "My name is go-bot, I am awesome."
+	got, err := chucknorris(cmd)
 
-			So(err, ShouldBeNil)
-			So(s, ShouldEqual, "")
-		})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got != "" {
+		t.Errorf("Test failed. Expected a empty return, got:  '%s'", got)
+	}
+}
 
-		Convey("When the text match a chuck name", func() {
-			cmd.Raw = "My name is chuck"
+func TestChuckNorrisWhenTheTextMatchChuck(t *testing.T) {
+	cmd := &bot.PassiveCmd{}
+	cmd.Raw = "My name is chuck"
+	got, err := chucknorris(cmd)
 
-			s, err := chucknorris(cmd)
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got == "" {
+		t.Errorf("Test failed. Should return a Chuck Norris facts")
+	}
+}
 
-			So(err, ShouldBeNil)
-			So(s, ShouldNotEqual, "")
-		})
+func TestChuckNorrisWhenTheTextMatchNorris(t *testing.T) {
+	cmd := &bot.PassiveCmd{}
+	cmd.Raw = "Hi, I'm Mr. Norris"
+	got, err := chucknorris(cmd)
 
-		Convey("When the text match norris", func() {
-			cmd.Raw = "Hi, I'm Mr. Norris"
-
-			s, err := chucknorris(cmd)
-
-			So(err, ShouldBeNil)
-			So(s, ShouldNotEqual, "")
-		})
-	})
+	if err != nil {
+		t.Errorf("Error should be nil => %s", err)
+	}
+	if got == "" {
+		t.Errorf("Test failed. Should return a Chuck Norris facts")
+	}
 }
